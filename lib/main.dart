@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kgpapp/DarkThemeProvider.dart';
 import 'package:kgpapp/color_schemes.g.dart';
+import 'package:kgpapp/widgets/QRCodeScanner.dart';
 import 'package:kgpapp/widgets/RoutePage.dart';
 import 'package:kgpapp/widgets/LoginScreen.dart';
 import 'package:provider/provider.dart';
@@ -38,6 +39,7 @@ class _MyAppState extends State<MyApp> {
           routes:{
             '/': (context ) => LoginScreen(themeChangeProvider: themeChangeProvider),
             '/authenticated': (context) => RoutePage(themeChangeProvider: themeChangeProvider),
+            '/authenticated/QRScaner': (context) => const QRScanner(),
           },
           themeMode: value.darkTheme ? ThemeMode.dark : ThemeMode.light,
           theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),

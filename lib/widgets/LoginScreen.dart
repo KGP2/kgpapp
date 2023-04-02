@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kgpapp/DarkThemeProvider.dart';
-import 'package:kgpapp/widgets/RoutePage.dart';
-import 'package:kgpapp/APIConnectors/LoginConnector.dart';
+import 'package:kgpapp/APIConnectors/APIConnector.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:kgpapp/Util/UserUtil.dart';
 
 class LoginScreen extends StatefulWidget {
    LoginScreen({super.key,required this.themeChangeProvider}){
@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return null;
   }
-  final LoginConnector connector = LoginConnector();
+  final APIConnector connector = APIConnector();
   final emailcontroller = TextEditingController();
   final passwordcontroller = TextEditingController();
   @override
@@ -151,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         ElevatedButton(
 
-                          onPressed: () {
+                          onPressed: () async {
                             _submit();
                             },
                           child: const Center(
@@ -180,12 +180,19 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
   }
-  void _submit() {
+  Future<void> _submit() async {
     setState(() => _submitted = true);
 
     if (_errorTextEmail == null && _errorTextPassword == null) {
       // notify the parent widget via the onSubmit callback
-      connector.login(emailcontroller.text, passwordcontroller.text);
+      try{
+     UserUtil.user = await connector.login(emailcontroller.text, passwordcontroller.text);
+      }catch(e){
+        ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(content: Text('błąd logowania$e')),
+        );
+        return;
+    }
       _storage.write(key: "KEY_EMAIL", value: emailcontroller.text);
       Navigator.pushNamed(context, '/authenticated');
 

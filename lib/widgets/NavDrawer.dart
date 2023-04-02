@@ -26,7 +26,7 @@ class NavDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.border_color),
             title: Text('Skasuj'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {Navigator.pushNamed(context, '/authenticated/QRScaner')},
           ),
           ListTile(
             leading: Icon(Icons.exit_to_app),
