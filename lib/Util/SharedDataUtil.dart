@@ -1,5 +1,6 @@
 import 'package:kgpapp/APIConnectors/APIConnector.dart';
 
-class UserUtil{
+class SharedDataUtil{
   static User? user;
+  static Event? event;
 }

@@ -39,7 +39,8 @@ class _MyAppState extends State<MyApp> {
           routes:{
             '/': (context ) => LoginScreen(themeChangeProvider: themeChangeProvider),
             '/authenticated': (context) => RoutePage(themeChangeProvider: themeChangeProvider),
-            '/authenticated/QRScaner': (context) => const QRScanner(),
+            '/authenticated/QRScanner/Scan': (context) =>  const QRScanner(validate:false),
+            '/authenticated/QRScanner/Validate': (context) =>  const QRScanner(validate:false),
           },
           themeMode: value.darkTheme ? ThemeMode.dark : ThemeMode.light,
           theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),

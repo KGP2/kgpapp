@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:kgpapp/Util/SharedDataUtil.dart';
+import 'package:kgpapp/widgets/BusinessCard.dart';
 class NavDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -7,7 +8,6 @@ class NavDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-
           ListTile(
             leading: Icon(Icons.input),
             title: Text('Home'),
@@ -16,22 +16,22 @@ class NavDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.verified_user),
             title: Text('Wydarzenia'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {Navigator.pushNamed(context, '/authenticated/')},
           ),
           ListTile(
             leading: Icon(Icons.settings),
             title: Text('Skanuj'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {Navigator.pushNamed(context, '/authenticated/QRScanner/Scan', arguments: false)},
           ),
           ListTile(
             leading: Icon(Icons.border_color),
             title: Text('Skasuj'),
-            onTap: () => {Navigator.pushNamed(context, '/authenticated/QRScaner')},
+            onTap: () => {Navigator.pushNamed(context, '/authenticated/QRScanner/Validate', arguments: true)},
           ),
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
-            onTap: () => {Navigator.pushNamed(context, '/')},
+            onTap: () => {Navigator.pushReplacementNamed(context, '/')},
           ),
         ],
       ),

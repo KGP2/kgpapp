@@ -3,7 +3,8 @@ import 'package:kgpapp/DarkThemeProvider.dart';
 import 'package:kgpapp/APIConnectors/APIConnector.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:kgpapp/Util/UserUtil.dart';
+import 'package:kgpapp/Util/SharedDataUtil.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class LoginScreen extends StatefulWidget {
    LoginScreen({super.key,required this.themeChangeProvider}){
@@ -43,9 +44,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return null;
   }
-  final APIConnector connector = APIConnector();
   final emailcontroller = TextEditingController();
   final passwordcontroller = TextEditingController();
+  final RoundedLoadingButtonController controler = new RoundedLoadingButtonController();
   @override
   void dispose(){
     emailcontroller.dispose();
@@ -120,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 15),
                         const Text(
-                          'Password',
+                          'Hasło',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -143,27 +144,28 @@ class _LoginScreenState extends State<LoginScreen> {
                               prefixIcon: const Icon(
                                 Icons.lock,
                               ),
-                              hintText: 'Password',
+                              hintText: 'Hasło',
                             ),
                           ),
                         ),
                         const SizedBox(height: 35),
 
-                        ElevatedButton(
-
+                        RoundedLoadingButton(
+                          controller: controler,
+                          color: Theme.of(context).colorScheme.outlineVariant,
                           onPressed: () async {
-                            _submit();
+                            _submit(controler);
                             },
-                          child: const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(10.0),
-                              child: Text(
-                                ' Log In',
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                          child:  Center(
+                            child: Text(
+                              'Zaloguj',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.inverseSurface,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+
                               ),
+
                             ),
                           ),
                         ),
@@ -180,22 +182,26 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
   }
-  Future<void> _submit() async {
+  Future<void> _submit(RoundedLoadingButtonController buttonController) async {
     setState(() => _submitted = true);
 
     if (_errorTextEmail == null && _errorTextPassword == null) {
       // notify the parent widget via the onSubmit callback
       try{
-     UserUtil.user = await connector.login(emailcontroller.text, passwordcontroller.text);
+     SharedDataUtil.user = await APIConnector.login(emailcontroller.text, passwordcontroller.text);
       }catch(e){
         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text('błąd logowania$e')),
+           SnackBar(content: Text('błąd logowania${e.toString().substring(9)}')),
         );
+        buttonController.reset();
         return;
     }
       _storage.write(key: "KEY_EMAIL", value: emailcontroller.text);
-      Navigator.pushNamed(context, '/authenticated');
+      Navigator.pushReplacementNamed(context, '/authenticated');
 
+
+      buttonController.success();
     }
+    buttonController.reset();
   }
 }

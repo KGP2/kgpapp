@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kgpapp/DarkThemeProvider.dart';
 import 'package:kgpapp/widgets/LoginScreen.dart';
 import 'package:kgpapp/widgets/NavDrawer.dart';
+import 'package:kgpapp/widgets/EventsScreen.dart';
 
 class RoutePage extends StatefulWidget {
   RoutePage({Key? key,required  this.themeChangeProvider}) : super(key: key){
@@ -46,6 +47,6 @@ class _RoutePageState extends State<RoutePage> {
             ),
           ],
         ),
-        body: Container());
+        body: EventScreen());
   }
 }

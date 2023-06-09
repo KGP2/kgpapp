@@ -3,12 +3,13 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kgpapp/APIConnectors/APIConnector.dart';
 import 'package:kgpapp/widgets/TicketInfo.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QRScanner extends StatefulWidget {
-  const QRScanner({Key? key}) : super(key: key);
-
+   const QRScanner({Key? key,required this.validate}) : super(key: key);
+  final bool validate;
   @override
   State<StatefulWidget> createState() => _QRScannerState();
 }
@@ -96,16 +97,26 @@ class _QRScannerState extends State<QRScanner> {
       onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
     );
   }
+  void redirectToInfo(Ticket t){
 
+}
   void _onQRViewCreated(QRViewController controller) {
     setState(() {
       this.controller = controller;
     });
     controller.scannedDataStream.listen((scanData) {
-      setState(() {
+      setState(() async {
         result = scanData;
+        String code = result!.code??'';
+        Ticket ticket;
+        if(widget.validate){
+            ticket =  await APIConnector.validateTicket(code);
+        }
+        else{
+          ticket = await APIConnector.getTicketInfo(code);
+        }
         Navigator.push(context,MaterialPageRoute(
-          builder: (context) => TicketInfo(result!.code??"null :("),
+          builder: (context) => TicketInfo(ticket),
         ));
       });
     });

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kgpapp/APIConnectors/APIConnector.dart';
 
 class TicketInfo extends StatelessWidget{
-  const TicketInfo(this.text, {super.key} );
-  final String text;
+  const TicketInfo(this.ticket, {super.key} );
+  final Ticket ticket;
   @override
   Widget build(BuildContext context) {
-    return Text(text);
+    return Text(ticket.title);
   }
 
 }
