@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:kgpapp/APIConnectors/APIConnector.dart';
 import 'package:kgpapp/widgets/TicketInfo.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 
 class QRScanner extends StatefulWidget {
-   const QRScanner({Key? key,required this.validate}) : super(key: key);
+  const QRScanner({Key? key, required this.validate}) : super(key: key);
   final bool validate;
+
   @override
   State<StatefulWidget> createState() => _QRScannerState();
 }
@@ -42,7 +44,6 @@ class _QRScannerState extends State<QRScanner> {
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: FloatingActionButton(
-
                   onPressed: () async {
                     await controller?.toggleFlash();
                     setState(() {});
@@ -50,18 +51,18 @@ class _QRScannerState extends State<QRScanner> {
                   child: FutureBuilder(
                     future: controller?.getFlashStatus(),
                     builder: (context, snapshot) {
-                      return Icon(snapshot.data!?Icons.flash_on:Icons.flash_off);
+                      return Icon(
+                          snapshot.data! ? Icons.flash_on : Icons.flash_off);
                     },
-                  )
-              ),
+                  )),
             ),
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: FloatingActionButton(
-                onPressed:() async {
-              await controller?.flipCamera();
-              setState(() {});
-              },
+                onPressed: () async {
+                  await controller?.flipCamera();
+                  setState(() {});
+                },
                 child: const Icon(Icons.cameraswitch_outlined),
               ),
             )
@@ -71,7 +72,6 @@ class _QRScannerState extends State<QRScanner> {
       body: Column(
         children: <Widget>[
           Expanded(flex: 4, child: _buildQrView(context)),
-
         ],
       ),
     );
@@ -80,7 +80,7 @@ class _QRScannerState extends State<QRScanner> {
   Widget _buildQrView(BuildContext context) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
-        MediaQuery.of(context).size.height < 400)
+            MediaQuery.of(context).size.height < 400)
         ? 150.0
         : 300.0;
     // To ensure the Scanner view is properly sizes after rotation
@@ -97,9 +97,9 @@ class _QRScannerState extends State<QRScanner> {
       onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
     );
   }
-  void redirectToInfo(Ticket t){
 
-}
+  void redirectToInfo(Ticket t) {}
+
   void _onQRViewCreated(QRViewController controller) {
     setState(() {
       this.controller = controller;
@@ -107,17 +107,18 @@ class _QRScannerState extends State<QRScanner> {
     controller.scannedDataStream.listen((scanData) {
       setState(() async {
         result = scanData;
-        String code = result!.code??'';
-        Ticket ticket;
-        if(widget.validate){
-            ticket =  await APIConnector.validateTicket(code);
+        String code = result!.code ?? '';
+        try {
+          if (widget.validate) {
+            await APIConnector.validateTicket(code);
+          } else {
+            await APIConnector.getTicketInfo(code);
+          }
+        } catch (Exception) {
+          Navigator.of(context).popAndPushNamed('/authenticated/ticket/NotOk');
+          return;
         }
-        else{
-          ticket = await APIConnector.getTicketInfo(code);
-        }
-        Navigator.push(context,MaterialPageRoute(
-          builder: (context) => TicketInfo(ticket),
-        ));
+        Navigator.of(context).popAndPushNamed('/authenticated/ticket/Ok');
       });
     });
   }

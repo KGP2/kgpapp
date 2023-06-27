@@ -11,7 +11,6 @@ class EventWidget extends StatelessWidget {
   final Event event;
   final func cb;
   final int idx;
-
   void redirectToQRCheck(bool validate,BuildContext context){
     if(validate){
       Navigator.pushNamed(context, '/authenticated/QRScanner/Validate');
@@ -23,7 +22,7 @@ class EventWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    var date = DateTime.parse(event.date);
     return Container(
       child: Dismissible(
           key: Key(event.name),
@@ -55,8 +54,24 @@ class EventWidget extends StatelessWidget {
             leading: CircleAvatar(child: Text(event.name[0]),),
             title: Text(event.name, style: TextStyle(fontWeight: FontWeight.w800)),
             children:  [
-               Text(event.date),
-
+               Padding(
+                 padding: const EdgeInsets.all(10.0),
+                 child: Row(
+                   children: [
+                     Text('Data: '),
+                     Text("${date.year.toString()}-${date.month.toString().padLeft(2,'0')}-${date.day.toString().padLeft(2,'0')}"),
+                   ],
+                 ),
+               ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  children: [
+                    Text('Miejsce: '),
+                    Text(event.place),
+                  ],
+                ),
+              ),
             Center(
               child: Row(
                 children: [

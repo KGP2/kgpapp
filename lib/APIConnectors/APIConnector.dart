@@ -37,14 +37,12 @@ class  User{
 }
 
 class Ticket{
-  final String type;
-  final String title;
-  final String detail;
-  final int status;
+  final String id;
+  final String url;
 
-  Ticket(this.type, this.title, this.detail, this.status);
+  Ticket(this.id,this.url);
   factory Ticket.fromJson(Map<String, dynamic> json){
-    return Ticket(json['type'],json['title'],json['detail'],json['status']);
+    return Ticket(json['ticketId'],json['ticketPdfUrl']);
   }
 }
 
@@ -53,7 +51,7 @@ class APIConnector{
 
    static final Dio dio = Dio();
    static String token = "";
-    static const apiPath = "https://kgp-ticketapp.azurewebsites.net/";
+    static const apiPath = "https://kgp-ticketapp.azurewebsites.net";
    static final client = RetryClient(http.Client());
     static login(String email,String password) async {
 
@@ -80,16 +78,16 @@ class APIConnector{
         }
 
   }
-  static Future<Ticket> validateTicket(String id) async {
+  static Future<bool> validateTicket(String id) async {
 
-    final response = await client.get(Uri.parse("$apiPath/tickets/validate/"+ id),headers: <String, String>{
+    final response = await client.post(Uri.parse("$apiPath/tickets/validate/"+ id),headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       'Authorization':'Bearer ' + token
     },);
     if (response.statusCode == 200) {
 
 
-      return Ticket.fromJson(jsonDecode(response.body));
+      return true;
 
     }
     else{
